@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: auto;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group:focus-within label {
+            color: #388E3C;
+        }
+        label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        input {
+            width: -webkit-fill-available;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;            
+        }
+        input:focus {
+            border-bottom: 1px solid #4CAF50;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f4e7;
+            border: 1px solid #c6e5c6;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Investment Calculator</h1>
+    
+    <div class="form-group">
+        <label for="monthlyInvestment">Monthly Investment (₹):</label>
+        <input type="number" id="monthlyInvestment" value="3000">
+    </div>
+
+    <div class="form-group">
+        <label for="annualRate">Annual Interest Rate (%):</label>
+        <input type="number" id="annualRate" value="16" step="0.1">
+    </div>
+
+    <div class="form-group">
+        <label for="years">Number of Years:</label>
+        <input type="number" id="years" value="14">
+    </div>
+
+    <button onclick="calculateInvestment()">Calculate</button>
+
+    <div id="result" class="result" style="display: none;">
+        <h3>Calculation Results</h3>
+        <p id="fvResult">Future Value: ₹0</p>
+        <p id="capitalGainsResult">Capital Gains: ₹0</p>
+        <p id="taxResult">LTCG Tax: ₹0</p>
+        <p id="afterTaxResult">Amount After Tax: ₹0</p>
+    </div>
+</div>
+
+<script>
+function calculateInvestment() {
+    // Get input values
+    const P = parseFloat(document.getElementById("monthlyInvestment").value);
+    const rAnnual = parseFloat(document.getElementById("annualRate").value) / 100; // Annual interest rate as decimal
+    const nYears = parseFloat(document.getElementById("years").value);
+    const nMonths = nYears * 12; // Number of months
+
+    // Calculate monthly interest rate
+    const rMonthly = rAnnual / 12;
+
+    // Future value of monthly investments formula
+    const FV = P * (((1 + rMonthly) ** nMonths - 1) / rMonthly);
+
+    // Total amount invested over the period
+    const totalInvested = P * nMonths;
+
+    // Capital gains (Profit)
+    const capitalGains = FV - totalInvested;
+
+    // LTCG tax (if capital gains exceed ₹1 lakh)
+    const taxableGains = Math.max(0, capitalGains - 100000); // Tax only if gains exceed ₹1 lakh
+    const tax = taxableGains * 0.10; // 10% LTCG tax
+
+    // Amount after tax
+    const amountAfterTax = FV - tax;
+
+    // Display results
+    document.getElementById("fvResult").innerText = `Future Value: ₹ ${FV.toFixed(2)}`;
+    document.getElementById("capitalGainsResult").innerText = `Capital Gains: ₹ ${capitalGains.toFixed(2)}`;
+    document.getElementById("taxResult").innerHTML = `LTCG Tax: <span style="color: red;">₹ ${tax.toFixed(2)}</span>`;
+    document.getElementById("afterTaxResult").innerHTML = `Amount After Tax: <span style="color: green;">₹ ${amountAfterTax.toFixed(2)}</span>`;
+
+    // Show the results section
+    document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>
